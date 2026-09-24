@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wieczorny Rytuał</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4EDE1; --card:#FBF7EF; --line:#DCCFB9;
+  --brown:#6B4F3A; --brown-d:#4A3526; --navy:#1F2A44; --navy-l:#3A4A6E;
+  --green:#7A9E7E; --yellow:#E2B94E; --grey:#BDB6AA;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--brown-d);font-family:"Patrick Hand","Segoe UI",Georgia,serif;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 48px}
+header{text-align:center;margin-bottom:20px}
+h1{margin:0;color:var(--navy);font-size:2.2rem;font-weight:600;letter-spacing:.02em}
+.sub{color:var(--brown);margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+h2{margin:0 0 12px;font-size:1.1rem;color:var(--navy);font-weight:600}
+.level{background:var(--navy);color:#F4EDE1;border:none;text-align:center;margin-bottom:20px}
+.level .lbl{opacity:.75;font-size:.9rem}
+.level .name{font-size:1.8rem;font-weight:600;margin:2px 0 10px}
+.level .next{font-size:.9rem;opacity:.85;margin-top:6px}
+.bar{height:10px;border-radius:99px;background:rgba(107,79,58,.15);overflow:hidden}
+.level .bar{background:rgba(244,237,225,.2);max-width:460px;margin:0 auto}
+.bar i{display:block;height:100%;background:var(--brown);border-radius:99px;transition:width .4s}
+.level .bar i{background:#E9D7B4}
+.grid{display:grid;grid-template-columns:1.25fr 1fr;gap:20px;align-items:start}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.calhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.calhead b{font-size:1.15rem;color:var(--navy);font-weight:600}
+.calhead button{background:none;border:1px solid var(--line);border-radius:10px;color:var(--brown);font:inherit;padding:2px 12px;cursor:pointer}
+.calhead button:hover{background:var(--bg)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dow{text-align:center;font-size:.8rem;color:var(--brown);opacity:.8}
+.day{aspect-ratio:1;border-radius:10px;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.95rem;position:relative}
+.day.empty{border:none}
+.day small{font-size:.7rem;opacity:.85}
+.day.green{background:var(--green);color:#fff;border-color:var(--green)}
+.day.yellow{background:var(--yellow);color:var(--brown-d);border-color:var(--yellow)}
+.day.grey{background:var(--grey);color:var(--brown-d);border-color:var(--grey)}
+.day.today{outline:2px solid var(--navy);outline-offset:1px}
+.legend{margin-top:14px;display:grid;gap:6px;font-size:.85rem}
+.legend div{display:flex;gap:8px;align-items:flex-start}
+.dot{flex:none;width:14px;height:14px;border-radius:50%;margin-top:4px}
+.dot.green{background:var(--green)}.dot.yellow{background:var(--yellow)}.dot.grey{background:var(--grey)}
+.right{display:grid;gap:20px}
+.budget{text-align:center}
+.budget .big{font-size:3rem;color:var(--navy);font-weight:600;line-height:1.1}
+.budget .meta{font-size:.85rem;color:var(--brown)}
+.streaks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.streaks div{background:var(--bg);border-radius:12px;padding:8px;text-align:center}
+.streaks b{display:block;font-size:1.5rem;color:var(--navy)}
+.streaks span{font-size:.75rem;color:var(--brown)}
+.reward{padding:10px 0;border-top:1px solid var(--line)}
+.reward:first-of-type{border-top:none}
+.reward .row{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px}
+.reward .cost{color:var(--navy);font-weight:600;white-space:nowrap}
+.reward .st{font-size:.8rem;color:var(--brown);margin-top:4px}
+.reward .can{color:var(--green);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th{text-align:left;color:var(--navy);font-weight:600;border-bottom:2px solid var(--line);padding:8px 6px}
+td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.pill{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.pill .dot{margin:0}
+td.pts{text-align:right;white-space:nowrap}
+.spent{color:var(--navy-l)}
+.tw{margin-top:20px;overflow-x:auto}
+.empty-msg{color:var(--brown);opacity:.8;padding:10px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Wieczorny Rytuał</h1>
+    <div class="sub">Droga do Siły i Stabilności Kamila</div>
+  </header>
+
+  <section class="card level" id="level"></section>
+
+  <div class="grid">
+    <section class="card">
+      <div class="calhead"><button id="prev" aria-label="Poprzedni miesiąc">&larr;</button><b id="month"></b><button id="next" aria-label="Następny miesiąc">&rarr;</button></div>
+      <div class="cal" id="cal"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+    <div class="right">
+      <section class="card budget" id="budget"></section>
+      <section class="card"><h2>Nagrody</h2><div id="rewards"></div></section>
+    </div>
+  </div>
+
+  <section class="card tw">
+    <h2>Historia</h2>
+    <div id="table"></div>
+  </section>
+</div>
+
+<!-- DANE: edytowane przez Claude. Nie zmieniaj ręcznie, chyba że wiesz co robisz. -->
+<script id="data" type="application/json">
+{
+  "person": "Kamil",
+  "activities": [
+    {
+      "id": "sen",
+      "name": "Dbam o dobry sen wieczorem",
+      "ratings": {
+        "green":  { "points": 5, "label": "Zielony", "text": "Wyłączam ekrany do 23:15, wyciszam się i idę spać" },
+        "yellow": { "points": 2, "label": "Żółty",   "text": "Ogarniam się przed 00:30" },
+        "grey":   { "points": 0, "label": "Szary",   "text": "Zasypiam późno - następnego dnia mam mniej energii na mój biznes i życie marzeń" }
+      }
+    }
+  ],
+  "entries": [],
+  "spent": [],
+  "rewards": [
+    { "id": "small", "name": "Mała niespodzianka", "cost": 10 },
+    { "id": "big", "name": "Duża niespodzianka", "cost": 25 },
+    { "id": "coach", "name": "Darmowa sesja coachingowa", "cost": 50 }
+  ],
+  "levels": [
+    { "name": "Zagubiony Wędrowiec", "min": 0 },
+    { "name": "Nocny Marek", "min": 5 },
+    { "name": "Sprytna Sowa", "min": 15 },
+    { "name": "Wieczorny Odkrywca", "min": 30 },
+    { "name": "Świt na Horyzoncie", "min": 60 },
+    { "name": "Skowronek", "min": 100 },
+    { "name": "Mistrz Snu", "min": 150 }
+  ]
+}
+</script>
+
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const act = D.activities[0];
+const R = act.ratings;
+const MONTHS = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+const DOW = ['Pn','Wt','Śr','Czw','Pt','Sb','Nd'];
+const DOWL = ['ndz','pon','wt','śr','czw','pt','sob'];
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,'0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); };
+const fmt = s => { const d = parse(s); return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} (${DOWL[d.getDay()]})`; };
+const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const entries = D.entries.filter(e => e.activity === act.id);
+const byDate = Object.fromEntries(entries.map(e => [e.date, e]));
+const pts = e => R[e.rating]?.points ?? 0;
+const earned = entries.reduce((s,e) => s + pts(e), 0);
+const spent = D.spent.reduce((s,x) => s + (D.rewards.find(r => r.id === x.reward)?.cost ?? x.cost ?? 0), 0);
+const budget = earned - spent;
+
+// poziom
+function renderLevel(){
+  const L = D.levels; let i = 0;
+  L.forEach((l,k) => { if (earned >= l.min) i = k; });
+  const cur = L[i], nxt = L[i+1];
+  let html = `<div class="lbl">Twój poziom (${i+1}/${L.length})</div><div class="name">${esc(cur.name)}</div>`;
+  if (nxt){
+    const p = Math.min(100, (earned - cur.min) / (nxt.min - cur.min) * 100);
+    html += `<div class="bar"><i style="width:${p}%"></i></div><div class="next">Do poziomu „${esc(nxt.name)}": ${nxt.min - earned} pkt</div>`;
+  } else {
+    html += `<div class="bar"><i style="width:100%"></i></div><div class="next">Najwyższy poziom osiągnięty</div>`;
+  }
+  $('level').innerHTML = html;
+}
+
+// serie
+function streak(okRatings){
+  const today = new Date(); today.setHours(0,0,0,0);
+  let d = new Date(today);
+  if (!byDate[iso(d)]) d.setDate(d.getDate()-1); // dzisiaj jeszcze nie ocenione = seria nie przerwana
+  let n = 0;
+  while (byDate[iso(d)] && okRatings.includes(byDate[iso(d)].rating)){ n++; d.setDate(d.getDate()-1); }
+  return n;
+}
+
+function renderBudget(){
+  $('budget').innerHTML = `
+    <h2>Budżet punktów</h2>
+    <div class="big">${budget}</div>
+    <div class="meta">zdobyte: ${earned} &middot; wydane: ${spent}</div>
+    <div class="streaks">
+      <div><b>${streak(['green'])}</b><span>dni z rzędu na zielono</span></div>
+      <div><b>${streak(['green','yellow'])}</b><span>dni z rzędu bez szarego</span></div>
+    </div>`;
+}
+
+function renderRewards(){
+  $('rewards').innerHTML = D.rewards.map(r => {
+    const can = Math.floor(budget / r.cost);
+    const rest = budget % r.cost;
+    let st, p;
+    if (can > 0){
+      p = rest / r.cost * 100;
+      st = `<span class="can">Możesz kupić: ${can}&times;</span> &middot; do kolejnej brakuje ${r.cost - rest} pkt`;
+    } else {
+      p = Math.max(0, budget) / r.cost * 100;
+      st = `Brakuje ${r.cost - Math.max(0,budget)} pkt`;
+    }
+    return `<div class="reward"><div class="row"><span>${esc(r.name)}</span><span class="cost">${r.cost} pkt</span></div>
+      <div class="bar"><i style="width:${p}%"></i></div><div class="st">${st}</div></div>`;
+  }).join('');
+}
+
+// kalendarz
+let view = new Date(); view.setDate(1);
+function renderCal(){
+  const y = view.getFullYear(), m = view.getMonth();
+  $('month').textContent = `${MONTHS[m]} ${y}`;
+  const first = new Date(y,m,1);
+  const offset = (first.getDay() + 6) % 7;
+  const days = new Date(y,m+1,0).getDate();
+  const todayS = iso(new Date());
+  let h = DOW.map(d => `<div class="dow">${d}</div>`).join('');
+  for (let i=0;i<offset;i++) h += '<div class="day empty"></div>';
+  for (let d=1; d<=days; d++){
+    const s = `${y}-${pad(m+1)}-${pad(d)}`;
+    const e = byDate[s];
+    const cls = ['day', e ? e.rating : '', s === todayS ? 'today' : ''].join(' ');
+    const title = e ? `${R[e.rating].label}: ${e.note || ''}` : '';
+    h += `<div class="${cls}" title="${esc(title)}">${d}${e ? `<small>${pts(e)} pkt</small>` : ''}</div>`;
+  }
+  $('cal').innerHTML = h;
+}
+$('prev').onclick = () => { view.setMonth(view.getMonth()-1); renderCal(); };
+$('next').onclick = () => { view.setMonth(view.getMonth()+1); renderCal(); };
+
+$('legend').innerHTML = Object.entries(R).map(([k,r]) =>
+  `<div><span class="dot ${k}"></span><span><b>${esc(r.label)} (${r.points} pkt)</b> - ${esc(r.text)}</span></div>`).join('');
+
+function renderTable(){
+  const rows = [
+    ...entries.map(e => ({ date:e.date, kind:'entry', e })),
+    ...D.spent.map(x => ({ date:x.date, kind:'spent', x }))
+  ].sort((a,b) => b.date.localeCompare(a.date));
+  if (!rows.length){ $('table').innerHTML = '<div class="empty-msg">Brak wpisów. Pierwszy wieczór czeka.</div>'; return; }
+  $('table').innerHTML = `<table><thead><tr><th>Data</th><th>Ocena</th><th style="text-align:right">Punkty</th><th>Notatka</th></tr></thead><tbody>` +
+    rows.map(r => {
+      if (r.kind === 'entry'){
+        const e = r.e;
+        return `<tr><td>${fmt(e.date)}</td><td><span class="pill"><span class="dot ${e.rating}"></span>${esc(R[e.rating].label)}</span></td><td class="pts">+${pts(e)}</td><td>${esc(e.note)}</td></tr>`;
+      }
+      const rw = D.rewards.find(q => q.id === r.x.reward);
+      const cost = rw?.cost ?? r.x.cost ?? 0;
+      return `<tr class="spent"><td>${fmt(r.x.date)}</td><td>Nagroda</td><td class="pts">-${cost}</td><td>${esc(rw?.name ?? 'Nagroda')}${r.x.note ? ' - ' + esc(r.x.note) : ''}</td></tr>`;
+    }).join('') + '</tbody></table>';
+}
+
+renderLevel(); renderBudget(); renderRewards(); renderCal(); renderTable();
+</script>
+</body>
+</html>
