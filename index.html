@@ -210,7 +210,7 @@ function renderRewards(){
     let st, p;
     if (can > 0){
       p = rest / r.cost * 100;
-      st = `<span class="can">Możesz kupić: ${can}&times;</span> &middot; do kolejnej brakuje ${r.cost - rest} pkt`;
+      st = `<span class="can">Możesz odebrać: ${can} ${can === 1 ? 'raz' : 'razy'}</span> &middot; do kolejnej brakuje ${r.cost - rest} pkt`;
     } else {
       p = Math.max(0, budget) / r.cost * 100;
       st = `Brakuje ${r.cost - Math.max(0,budget)} pkt`;
