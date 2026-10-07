@@ -56,6 +56,7 @@ h2{margin:0 0 12px;font-size:1.1rem;color:var(--navy);font-weight:600}
 .streaks div{background:var(--bg);border-radius:12px;padding:8px;text-align:center}
 .streaks b{display:block;font-size:1.5rem;color:var(--navy)}
 .streaks span{font-size:.75rem;color:var(--brown)}
+.streaks small{display:block;font-size:.7rem;color:#8C8578;margin-top:2px}
 .reward{padding:10px 0;border-top:1px solid var(--line)}
 .reward:first-of-type{border-top:none}
 .reward .row{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px}
@@ -127,7 +128,8 @@ td.pts{text-align:right;white-space:nowrap}
     { "date": "2026-10-02", "activity": "sen", "rating": "green", "note": "Poszedłem spać o 23:40. Nadal trochę bingowałem w tel, co mówi mi, że nadal trudno mi coś przeżyć pod spodem. Niemniej starałem się w tym zostać i odłożyć tel szybciej niż później." },
     { "date": "2026-10-03", "activity": "sen", "rating": "green", "note": "Poszedłem spać o 23. Zdecydowanie mniej byłem w tel. Budziłem się w nocy i miałem trudne sny aż do rana (to pewnie to, przed czym uciekam w tel), ale spałem do 8." },
     { "date": "2026-10-04", "activity": "sen", "rating": "green", "note": "Wróciłem do domu po 21, zanim się rozpakowałem i ogarnąłem była 22:30, obejrzałem Jet Lag. Byłem krótko na tel i odłożyłem go 23:50." },
-    { "date": "2026-10-05", "activity": "sen", "rating": "green", "note": "Poszedłem spać przed 24. Odwiozłem N później i wróciłem o 22:15. Chwilę logistyki domowej, odmóżdżyłem się chwilę i świadomie myślę o challenge'u, odłożyłem telefon i poszedłem spać." }
+    { "date": "2026-10-05", "activity": "sen", "rating": "green", "note": "Poszedłem spać przed 24. Odwiozłem N później i wróciłem o 22:15. Chwilę logistyki domowej, odmóżdżyłem się chwilę i świadomie myślę o challenge'u, odłożyłem telefon i poszedłem spać." },
+    { "date": "2026-10-06", "activity": "sen", "rating": "yellow", "note": "Skończyłem kolację z typkami na chacie o 24 i potrzebowałem chwili z tel. Poszedłem spać o 0:30." }
   ],
   "spent": [],
   "rewards": [
@@ -194,14 +196,24 @@ function streak(okRatings){
   return n;
 }
 
+function bestStreak(okRatings){
+  let best = 0, run = 0, prev = null;
+  [...entries].sort((a,b) => a.date.localeCompare(b.date)).forEach(e => {
+    if (!okRatings.includes(e.rating)){ run = 0; prev = null; return; }
+    const next = prev && iso(new Date(parse(prev).getTime() + 864e5 + 36e5)) === e.date; // +1 dzień (odporne na zmianę czasu)
+    run = next ? run + 1 : 1; prev = e.date; best = Math.max(best, run);
+  });
+  return best;
+}
+
 function renderBudget(){
   $('budget').innerHTML = `
     <h2>Budżet punktów</h2>
     <div class="big">${budget}</div>
     <div class="meta">zdobyte: ${earned} &middot; wydane: ${spent}</div>
     <div class="streaks">
-      <div><b>${streak(['green'])}</b><span>dni z rzędu na zielono</span></div>
-      <div><b>${streak(['green','yellow'])}</b><span>dni z rzędu bez szarego</span></div>
+      <div><b>${streak(['green'])}</b><span>dni z rzędu na zielono</span><small>najdłuższa seria: ${bestStreak(['green'])}</small></div>
+      <div><b>${streak(['green','yellow'])}</b><span>dni z rzędu bez szarego</span><small>najdłuższa seria: ${bestStreak(['green','yellow'])}</small></div>
     </div>`;
 }
 
